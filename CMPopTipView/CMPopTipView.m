@@ -42,6 +42,7 @@
 @synthesize textAlignment;
 @synthesize animation;
 @synthesize maxWidth;
+@synthesize cornerRadius;
 @synthesize disableTapToDismiss;
 
 - (CGRect)bubbleFrame {

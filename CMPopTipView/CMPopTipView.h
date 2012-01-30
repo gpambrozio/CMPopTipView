@@ -128,6 +128,7 @@ typedef enum {
 @property (nonatomic, assign)			UITextAlignment			textAlignment;
 @property (nonatomic, assign)           CMPopTipAnimation       animation;
 @property (nonatomic, assign)           CGFloat                 maxWidth;
+@property (nonatomic, assign)           CGFloat                 cornerRadius;
 
 /* Contents can be either a message or a UIView */
 - (id)initWithMessage:(NSString *)messageToShow;
