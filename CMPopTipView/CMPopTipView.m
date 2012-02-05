@@ -341,22 +341,27 @@
             self.transform = CGAffineTransformMakeScale(0.75f, 0.75f);
             
             // animate to a bigger size
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDelegate:self];
-            [UIView setAnimationDidStopSelector:@selector(popAnimationDidStop:finished:context:)];
-            [UIView setAnimationDuration:0.15f];
-            self.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
-            self.alpha = 1.0;
-            [UIView commitAnimations];
+            [UIView animateWithDuration:0.15f
+                             animations:^{
+                                 self.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+                                 self.alpha = 1.0;
+                             }
+                             completion:^(BOOL finished) {
+                                 [UIView animateWithDuration:0.1
+                                                  animations:^{
+                                                      self.transform = CGAffineTransformIdentity;
+                                                  }];
+                             }];
         }
 		
 		[self setNeedsDisplay];
 		
 		if (animation == CMPopTipAnimationSlide) {
-			[UIView beginAnimations:nil context:nil];
-			self.alpha = 1.0;
-			self.frame = finalFrame;
-			[UIView commitAnimations];
+            [UIView animateWithDuration:0.15
+                             animations:^{
+                                 self.alpha = 1.0;
+                                 self.frame = finalFrame;
+                             }];
 		}
 	}
 	else {
@@ -395,22 +400,20 @@
 	self.targetObject = nil;
 }
 
-- (void)dismissAnimationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context {
-	[self finaliseDismiss];
-}
-
 - (void)dismissAnimated:(BOOL)animated {
 	
 	if (animated) {
 		CGRect frame = self.frame;
 		frame.origin.y += 10.0;
 		
-		[UIView beginAnimations:nil context:nil];
-		self.alpha = 0.0;
-		self.frame = frame;
-		[UIView setAnimationDelegate:self];
-		[UIView setAnimationDidStopSelector:@selector(dismissAnimationDidStop:finished:context:)];
-		[UIView commitAnimations];
+        [UIView animateWithDuration:0.15
+                         animations:^{
+                             self.alpha = 0.0;
+                             self.frame = frame;
+                         } 
+                         completion:^(BOOL finished) {
+                             [self finaliseDismiss];
+                         }];
 	}
 	else {
 		[self finaliseDismiss];
@@ -431,14 +434,6 @@
 	if (delegate && [delegate respondsToSelector:@selector(popTipViewWasDismissedByUser:)]) {
 		[delegate popTipViewWasDismissedByUser:self];
 	}
-}
-
-- (void)popAnimationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context {
-    // at the end set to normal size
-	[UIView beginAnimations:nil context:nil];
-	[UIView setAnimationDuration:0.1f];
-	self.transform = CGAffineTransformIdentity;
-	[UIView commitAnimations];
 }
 
 - (id)initWithFrame:(CGRect)frame {
