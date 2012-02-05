@@ -371,13 +371,6 @@
 		[self setNeedsDisplay];
 		self.frame = finalFrame;
 	}
-    
-    if (!self.disableTapToDismiss) {
-        [dismissGesture.view removeGestureRecognizer:dismissGesture];
-        [dismissGesture release];
-        dismissGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesture:)];
-        [containerView addGestureRecognizer:dismissGesture];
-    }
 }
 
 - (void)presentPointingAtBarButtonItem:(UIBarButtonItem *)barButtonItem animated:(BOOL)animated {
@@ -404,9 +397,6 @@
 }
 
 - (void)finaliseDismiss {
-    [dismissGesture.view removeGestureRecognizer:dismissGesture];
-    [dismissGesture release];
-    dismissGesture = nil;
 	[self removeFromSuperview];
 	highlight = NO;
 	self.targetObject = nil;
@@ -443,7 +433,12 @@
 	}
 }
 
-- (void)tapGesture:(UITapGestureRecognizer *)gestureRecognizer {
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+	if (self.disableTapToDismiss) {
+		[super touchesBegan:touches withEvent:event];
+		return;
+	}
+	
 	highlight = YES;
 	[self setNeedsDisplay];
 	
@@ -497,8 +492,6 @@
 }
 
 - (void)dealloc {
-    [dismissGesture.view removeGestureRecognizer:dismissGesture];
-    [dismissGesture release];
 	[backgroundColor release];
     [customView release];
 	[message release];
