@@ -24,6 +24,7 @@
 //
 
 #import "CMPopTipView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface CMPopTipView ()
 @property (nonatomic, retain, readwrite)	id	targetObject;
@@ -334,14 +335,15 @@
             self.frame = startFrame;
         }
 		else if (animation == CMPopTipAnimationPop) {
+            self.layer.anchorPoint = CGPointMake(targetPoint.x / finalFrame.size.width, targetPoint.y / finalFrame.size.height);
             self.frame = finalFrame;
-            self.alpha = 0.5;
+            self.alpha = 0.8;
             
-            // start a little smaller
-            self.transform = CGAffineTransformMakeScale(0.75f, 0.75f);
+            // start smaller
+            self.transform = CGAffineTransformMakeScale(0.1f, 0.1f);
             
             // animate to a bigger size
-            [UIView animateWithDuration:0.15f
+            [UIView animateWithDuration:0.2f
                              animations:^{
                                  self.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
                                  self.alpha = 1.0;
@@ -403,17 +405,28 @@
 - (void)dismissAnimated:(BOOL)animated {
 	
 	if (animated) {
-		CGRect frame = self.frame;
-		frame.origin.y += 10.0;
-		
-        [UIView animateWithDuration:0.15
-                         animations:^{
-                             self.alpha = 0.0;
-                             self.frame = frame;
-                         } 
-                         completion:^(BOOL finished) {
-                             [self finaliseDismiss];
-                         }];
+        if (animation == CMPopTipAnimationSlide) {
+            CGRect frame = self.frame;
+            frame.origin.y += 10.0;
+            
+            [UIView animateWithDuration:0.15
+                             animations:^{
+                                 self.alpha = 0.0;
+                                 self.frame = frame;
+                             } 
+                             completion:^(BOOL finished) {
+                                 [self finaliseDismiss];
+                             }];
+        }
+        else {
+            [UIView animateWithDuration:0.15
+                             animations:^{
+                                 self.transform = CGAffineTransformMakeScale(0.1, 0.1);
+                             } 
+                             completion:^(BOOL finished) {
+                                 [self finaliseDismiss];
+                             }];
+        }
 	}
 	else {
 		[self finaliseDismiss];
