@@ -115,6 +115,7 @@ typedef enum {
 	PointDirection			pointDirection;
 	CGFloat					pointerSize;
 	CGPoint					targetPoint;
+    UITapGestureRecognizer  *dismissGesture;
 }
 
 @property (nonatomic, retain)			UIColor					*backgroundColor;
